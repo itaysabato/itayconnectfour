@@ -13,7 +13,48 @@ public class ItayRotem implements Player {
     Checker[][] currentState = null;
     Checker myColor = null;
     Checker hisColor = null;
+     int[][] table = null;
 //    Board b;        //
+
+
+        private void buildTable() {
+        table = new int[currentState.length][currentState[0].length];
+        int i = 0,j = 0, k=0;
+        //horizontal
+        for(i=0;i<currentState.length;i++)
+            for(j=0;j<currentState[0].length-3;j++)
+                for(k=0;k<=3;k++)
+                    table[i][j+k]++;
+        //vertical
+        for(i=0;i<currentState[0].length;i++)
+            for(j=0;j<currentState.length-3;j++)
+                for(k=0;k<=3;k++)
+                    table[j+k][i]++;
+        //diagonal1
+        for(i=0;i<currentState.length;i++)     {
+            for(j=0;j<currentState[0].length-3;j++) {
+                 if(j+3+i>=currentState.length || j+i<0)  continue;
+                 for(k=0;k<=3;k++)
+                     table[j+k+i][j+k]++;
+            }
+        }
+        //diagonal2
+        for(i=0;i<table.length;i++)     {
+            for(j=table[0].length-1;j>=3;j--) {
+                 if(j-3-i<0 || j-i>=table[0].length)  continue;
+                 for(k=0;k<=3;k++)
+                     table[j-k-i][j-k]++;
+            }
+        }
+
+        for(i=0;i<currentState.length;i++) {
+            for(j=0;j<currentState[0].length;j++)
+                    System.out.print(table[i][j]+",");
+            System.out.println();
+        }
+
+    }
+
 
     public int getBestResponse(Checker[][] state, Checker myColor) {
 //        this.b = b;           //
@@ -21,6 +62,7 @@ public class ItayRotem implements Player {
         if(myColor!=Checker.RED) hisColor = Checker.RED ;
         else hisColor = Checker.BLACK ;
         currentState = state;
+        buildTable();
         return bestChild();       //Integer.MIN_VALUE, Integer.MAX_VALUE, true,0,0
     }
 
@@ -210,6 +252,12 @@ public class ItayRotem implements Player {
      * @return the heuristic value.
      */
     private int applyHeuristic() {
-        return 0;  //To change body of created methods use File | Settings | File Templates.
+        int i,j,result = 0;
+        for(i=0;i<currentState.length;i++)
+            for(j=0;j<currentState[0].length;j++) {
+                if(currentState[i][j]==myColor) result += table[i][j];
+                else if(currentState[i][j]==hisColor)  result -= table[i][j];
+            }
+        return result;
     }
 }
