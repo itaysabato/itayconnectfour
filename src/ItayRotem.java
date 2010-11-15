@@ -1,12 +1,10 @@
-import java.util.Arrays;
-
 /**
- * Names: Itay Sabato, Rotem Barzilay <br/>
- * Logins: itays04, rotmus  <br/>
- * IDs: 036910008, RID  <br/>
- * Date: 13/11/2010  <br/>
- * Time: 15:52:40  <br/>
- */
+* Names: Itay Sabato, Rotem Barzilay <br/>
+* Logins: itays04, rotmus  <br/>
+* IDs: 036910008, RID  <br/>
+* Date: 13/11/2010  <br/>
+* Time: 15:52:40  <br/>
+*/
 public class ItayRotem implements Player {
 
     private static final int MAX_DEPTH = 700;
@@ -15,92 +13,116 @@ public class ItayRotem implements Player {
     Checker[][] currentState = null;
     Checker myColor = null;
     Checker hisColor = null;
+//    Board b;        //
 
     public int getBestResponse(Checker[][] state, Checker myColor) {
+//        this.b = b;           //
         this.myColor = myColor;
         if(myColor!=Checker.RED) hisColor = Checker.RED ;
         else hisColor = Checker.BLACK ;
         currentState = state;
-        return maxValue0();       //Integer.MIN_VALUE, Integer.MAX_VALUE, true,0,0
+        return bestChild();       //Integer.MIN_VALUE, Integer.MAX_VALUE, true,0,0
     }
 
-    private int maxValue0() {
+    private int bestChild() {
+        int alpha =   Integer.MIN_VALUE;
         int tempRow;
         int v = Integer.MIN_VALUE;
         int bestChild = 0;
-        remainingDepth--;
-        
+
         for( int i = 0; i < currentState[0].length; i++) {
             tempRow = dropChecker(i,myColor);
             if(tempRow==-1) continue;
-            int m =  minValue(Integer.MIN_VALUE, Integer.MAX_VALUE,tempRow,i);
+
+//            b.setCoin(tempRow,i,myColor);          //
+
+            remainingDepth--;
+            int m =  minValue(alpha, Integer.MAX_VALUE,tempRow,i);
+            remainingDepth++;
+            currentState[tempRow][i] = Checker.EMPTY;
+
+//            b.setCoin(tempRow,i,Checker.EMPTY);          //
+
             if(v <= m ) {
-                 v = m;
-                 bestChild = i;
+                v = m;
+                bestChild = i;
             }
-            pickupChecker(i);
+//            alpha = Math.max(v,alpha);
+            System.out.println("v="+v+", best="+bestChild);                   //
         }
-        remainingDepth++;
         return bestChild;
     }
 
 
-    private int maxValue(int alpha, int beta, boolean isRoot,int row,int col) {
+    private int maxValue(int alpha, int beta,int row,int col) {
         Checker winner = identifyWinner(row,col);
-       System.out.println(Arrays.deepToString(currentState));
-       System.out.println(winner);
+
+//        System.out.println("drop "+hisColor+" in: " +row+", "+col);           //
+//        System.out.println(Arrays.deepToString(currentState));             //
+//        System.out.println(winner);                                                                        //
 
         if(winner  != Checker.EMPTY) {
             return winner == myColor ? Integer.MAX_VALUE : Integer.MIN_VALUE;
         }
         if(remainingDepth == 0) return applyHeuristic();
+
         int tempRow;
         int v = Integer.MIN_VALUE;
-        int bestChild = 0;
-        
-        remainingDepth--;
         for( int i = 0; i < currentState[0].length; i++) {
             tempRow = dropChecker(i,myColor);
             if(tempRow==-1) continue;
-            int m =  minValue(alpha, beta,tempRow,i);
-            if(v <= m ) {
-                 v = m;
-                 bestChild = i;
-            }
+
+//            b.setCoin(tempRow,i,myColor);          //
+
+            remainingDepth--;
+            v = Math.max(minValue(alpha, beta,tempRow,i), v);
+            remainingDepth++;
+            currentState[tempRow][i] = Checker.EMPTY;
+
+//            b.setCoin(tempRow,i,Checker.EMPTY);       //
+
             if(v >= beta) {
-                pickupChecker(i);
-                return isRoot ? i : v;
+                return v;
             }
             alpha = Math.max(v,alpha);
-            pickupChecker(i);
         }
-        remainingDepth++;
-        return isRoot ? bestChild : v;
+        return v;
     }
 
-     private int minValue(int alpha, int beta, int row,int col) {
+    private int minValue(int alpha, int beta, int row,int col) {
         Checker winner = identifyWinner(row,col);
+
+//        System.out.println("drop "+myColor+" in: " +row+", "+col);                                   //
+//        System.out.println(Arrays.deepToString(currentState));                                  //
+//        System.out.println(winner);                                                                                              //
+
         if(winner  != Checker.EMPTY) {
             return winner == myColor ? Integer.MAX_VALUE : Integer.MIN_VALUE;
         }
         if(remainingDepth == 0) return applyHeuristic();
-         int tempRow;
+
+        int tempRow;
         int v = Integer.MAX_VALUE;
-        remainingDepth--;
         for(int i = 0; i < currentState[0].length; i++) {
             tempRow = dropChecker(i,hisColor);
             if(tempRow==-1) continue;
-            v = Math.min(v, maxValue(alpha, beta,false,tempRow,i));
+
+//            b.setCoin(tempRow,i,hisColor);                          //
+
+            remainingDepth--;
+            v = Math.min(v, maxValue(alpha, beta,tempRow,i));
+            remainingDepth++;
+            currentState[tempRow][i] = Checker.EMPTY;
+
+//            b.setCoin(tempRow,i,Checker.EMPTY);           //
+
             if(v <= alpha) {
-                pickupChecker(i);
                 return v;
             }
             beta = Math.min(v,beta);
-            pickupChecker(i);
         }
-        remainingDepth++;
         return v;
-     }
+    }
 
 
     private boolean checkDiagonal2(int row,int col,Checker curColor) {
@@ -109,7 +131,7 @@ public class ItayRotem implements Player {
             if(currentState[row-i][col+i]!=curColor)  break;
             counter++;
         }
-         for(i=1;i<=3 && col-i>=0 && row+i<currentState.length;i++) {
+        for(i=1;i<=3 && col-i>=0 && row+i<currentState.length;i++) {
             if(currentState[row+i][col-i]!=curColor)  break;
             counter++;
         }
@@ -122,7 +144,7 @@ public class ItayRotem implements Player {
             if(currentState[row+i][col+i]!=curColor)  break;
             counter++;
         }
-         for(i=1;i<=3 && col-i>=0 && row-i>=0;i++) {
+        for(i=1;i<=3 && col-i>=0 && row-i>=0;i++) {
             if(currentState[row-i][col-i]!=curColor)  break;
             counter++;
         }
@@ -135,38 +157,38 @@ public class ItayRotem implements Player {
             if(currentState[row][col+i]!=curColor)  break;
             counter++;
         }
-         for(i=1;i<=3 && col-i>=0;i++) {
+        for(i=1;i<=3 && col-i>=0;i++) {
             if(currentState[row][col-i]!=curColor)  break;
             counter++;
         }
         return counter>3;
     }
 
-     private boolean checkHorizontal(int row,int col,Checker curColor) {
-         int counter =1,i;
-         for(i=1;i<=3 && row+i<currentState.length;i++) {
-                     if(currentState[row+i][col]!=curColor)  break;
-                     counter++;
-                 }
-         for(i=1;i<=3 && row-i>=0;i++) {
-                     if(currentState[row-i][col]!=curColor)  break;
-                     counter++;
-         }
-            return counter>3;
+    private boolean checkHorizontal(int row,int col,Checker curColor) {
+        int counter =1,i;
+        for(i=1;i<=3 && row+i<currentState.length;i++) {
+            if(currentState[row+i][col]!=curColor)  break;
+            counter++;
         }
+        for(i=1;i<=3 && row-i>=0;i++) {
+            if(currentState[row-i][col]!=curColor)  break;
+            counter++;
+        }
+        return counter>3;
+    }
 
     /**
      * @return the color which has four in a row or Empty if there isn't one.
      */
     private Checker identifyWinner(int row,int col) {
-    	Checker curColor = currentState[row][col];
+        Checker curColor = currentState[row][col];
         if(checkHorizontal(row,col,curColor) ||
                 checkVertical(row,col,curColor) ||
                 checkDiagonal1(row,col,curColor) ||
                 checkDiagonal2(row,col,curColor)) {
             return curColor;
         }
-        return Checker.EMPTY; 
+        return Checker.EMPTY;
     }
 
     /**
@@ -174,28 +196,13 @@ public class ItayRotem implements Player {
      * @param i column number.
      */
     private int dropChecker(int i,Checker color) {
-        int row = 0;
-    	for(;row<currentState.length;row++) {
-    		if(currentState[row][i]==Checker.EMPTY) {
-    			currentState[row][i] = color;
-    			return row;
-    		}
-    	}
+        for(int row = currentState.length - 1;row >= 0; row--) {
+            if(currentState[row][i] == Checker.EMPTY) {
+                currentState[row][i] = color;
+                return row;
+            }
+        }
         return -1;
-    }
-
-    /**
-     *  pickup checker from column i.
-     * @param i column number.
-     */
-     private void pickupChecker(int i) {
-        int row = currentState.length-1;
-     	for(;row<currentState.length;row++) {
-     		if(currentState[row][i]!=Checker.EMPTY) {
-     			currentState[row][i] = Checker.EMPTY;
-     			return;
-     		}
-     	}
     }
 
     /**
