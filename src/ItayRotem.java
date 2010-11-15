@@ -7,14 +7,17 @@
  */
 public class ItayRotem implements Player {
 
-    private static final int MAX_DEPTH = 10;
+    private static final int MAX_DEPTH = 100;
 
     int remainingDepth = MAX_DEPTH;
     Checker[][] currentState = null;
     Checker myColor = null;
+    Checker hisColor = null;
 
     public int getBestResponse(Checker[][] state, Checker myColor) {
         this.myColor = myColor;
+        if(myColor!=Checker.RED) hisColor = Checker.RED ;
+        else hisColor = Checker.BLACK ;
         currentState = state;
         return maxValue(Integer.MIN_VALUE, Integer.MAX_VALUE, true,0,0);
     }
@@ -30,7 +33,8 @@ public class ItayRotem implements Player {
         remainingDepth--;
         int i = 0;
         for( ; i < currentState[0].length; i++) {
-            tempRow = dropChecker(i);
+            tempRow = dropChecker(i,myColor);
+            if(tempRow==-1) continue;
             v = Math.max(v, minValue(alpha, beta,tempRow,i));
             if(v >= beta) {
                 pickupChecker(i);
@@ -53,7 +57,8 @@ public class ItayRotem implements Player {
         int v = Integer.MAX_VALUE;
         remainingDepth--;
         for(int i = 0; i < currentState[0].length; i++) {
-            tempRow = dropChecker(i);
+            tempRow = dropChecker(i,hisColor);
+            if(tempRow==-1) continue;
             v = Math.min(v, maxValue(alpha, beta,false,tempRow,i));
             if(v <= alpha) {
                 pickupChecker(i);
@@ -137,15 +142,15 @@ public class ItayRotem implements Player {
      *  pot checker in column i.
      * @param i column number.
      */
-    private int dropChecker(int i) {
+    private int dropChecker(int i,Checker color) {
         int row = 0;
     	for(;row<currentState.length;row++) {
     		if(currentState[row][i]==Checker.EMPTY) {
-    			currentState[row][i] = myColor;
+    			currentState[row][i] = color;
     			return row;
     		}
     	}
-        return 0;
+        return -1;
     }
 
     /**
