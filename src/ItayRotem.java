@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * Names: Itay Sabato, Rotem Barzilay <br/>
  * Logins: itays04, rotmus  <br/>
@@ -7,7 +9,7 @@
  */
 public class ItayRotem implements Player {
 
-    private static final int MAX_DEPTH = 100;
+    private static final int MAX_DEPTH = 700;
 
     int remainingDepth = MAX_DEPTH;
     Checker[][] currentState = null;
@@ -24,18 +26,27 @@ public class ItayRotem implements Player {
 
     private int maxValue(int alpha, int beta, boolean isRoot,int row,int col) {
         Checker winner = identifyWinner(row,col);
+
+//        System.out.println(Arrays.deepToString(currentState));
+//        System.out.println(winner);
+
         if(winner  != Checker.EMPTY) {
             return winner == myColor ? Integer.MAX_VALUE : Integer.MIN_VALUE;
         }
         if(remainingDepth == 0) return applyHeuristic();
         int tempRow;
         int v = Integer.MIN_VALUE;
+        int bestChild = 0;
+        
         remainingDepth--;
-        int i = 0;
-        for( ; i < currentState[0].length; i++) {
+        for( int i = 0; i < currentState[0].length; i++) {
             tempRow = dropChecker(i,myColor);
             if(tempRow==-1) continue;
-            v = Math.max(v, minValue(alpha, beta,tempRow,i));
+            int m =  minValue(alpha, beta,tempRow,i);
+            if(v <= m ) {
+                 v = m;
+                 bestChild = i;
+            }
             if(v >= beta) {
                 pickupChecker(i);
                 return isRoot ? i : v;
@@ -44,7 +55,7 @@ public class ItayRotem implements Player {
             pickupChecker(i);
         }
         remainingDepth++;
-        return isRoot ? i : v;
+        return isRoot ? bestChild : v;
     }
 
      private int minValue(int alpha, int beta, int row,int col) {
