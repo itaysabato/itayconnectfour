@@ -1,24 +1,17 @@
-//import junit.framework.TestCase;
-//
-//import static Checker.BLACK;
-//
-///**
-// * Created by IntelliJ IDEA.
-// * User: Rotmus
-// * Date: 15/11/2010
-// * Time: 21:45:13
-// * To change this template use File | Settings | File Templates.
-// */
-//public class PlayerTest extends TestCase {
-//
-//    public void testWinner() {
-//        Player player = new ItayRotem();
-//
-//        Checker[][] state = {
-//                {BLACK, BLACK, BLACK, BLACK},
-//                {BLACK, BLACK, BLACK, BLACK},
-//                {BLACK, BLACK, BLACK, BLACK},
-//                {BLACK, BLACK ,BLACK ,BLACK}} ;
-//
-//    }
-//}
+import junit.framework.TestCase;
+
+public class PlayerTest extends TestCase {
+
+    public void testWinner() {
+        ItayRotem player = new ItayRotem();
+
+        // [[RED, RED, RED, EMPTY], [BLACK, BLACK, BLACK, EMPTY], [RED, RED, RED, EMPTY], [BLACK, BLACK, BLACK, EMPTY]]
+        Checker[][] state = {
+                {Checker.RED,Checker. RED, Checker.RED,Checker. EMPTY},
+                {Checker.BLACK,Checker.BLACK, Checker.BLACK, Checker.BLACK},
+                {Checker.RED, Checker.RED, Checker.RED, Checker.EMPTY},
+                {Checker.BLACK, Checker.BLACK ,Checker.BLACK ,Checker.EMPTY}} ;
+
+        player.currentState = state;
+    }
+}
