@@ -41,7 +41,7 @@ public class ItayRotem implements Player {
         //diagonal2
         for(i=0;i<table.length;i++)     {
             for(j=table[0].length-1;j>=3;j--) {
-                 if(j-3-i<0 || j-i>=table[0].length)  continue;
+                 if(j-3-i<0 || j-i>=table.length)  continue;
                  for(k=0;k<=3;k++)
                      table[j-k-i][j-k]++;
             }
