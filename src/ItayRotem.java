@@ -9,7 +9,6 @@ public class ItayRotem implements Player {
 
     private static final int MAX_DEPTH = 10;
 
-    
     int remainingDepth = MAX_DEPTH;
     Checker[][] currentState = null;
     Checker myColor = null;
@@ -64,7 +63,6 @@ public class ItayRotem implements Player {
             pickupChecker(i);
         }
         remainingDepth++;
-         
         return v;
      }
 
@@ -72,7 +70,16 @@ public class ItayRotem implements Player {
      * @return the color which has four in a row or Empty if there isn't one.
      */
     private Checker identifyWinner() {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+    	int counter = 0,row = 0,col = 0;
+    	Checker curColor = Checker.EMPTY;
+    	//horizontal check:
+    	for(;row<currentState.length;row++) {
+    		for(;col<currentState[0].length;col++) {
+    			
+    		}
+    	}
+    	//vertical check:
+        return Checker.EMPTY; 
     }
 
     /**
@@ -80,7 +87,13 @@ public class ItayRotem implements Player {
      * @param i column number.
      */
     private void dropChecker(int i) {
-        //To change body of created methods use File | Settings | File Templates.
+        int row = 0;
+    	for(;row<currentState.length;row++) {
+    		if(currentState[row][i]==Checker.EMPTY) {
+    			currentState[row][i] = myColor;
+    			return;
+    		}
+    	}
     }
 
     /**
@@ -88,7 +101,13 @@ public class ItayRotem implements Player {
      * @param i column number.
      */
      private void pickupChecker(int i) {
-        //To change body of created methods use File | Settings | File Templates.
+        int row = currentState.length-1;
+     	for(;row<currentState.length;row++) {
+     		if(currentState[row][i]!=Checker.EMPTY) {
+     			currentState[row][i] = Checker.EMPTY;
+     			return;
+     		}
+     	}
     }
 
     /**
