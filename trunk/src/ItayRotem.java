@@ -9,6 +9,7 @@ public class ItayRotem implements Player {
 
     private static final int MAX_DEPTH = 10;
 
+    
     int remainingDepth = MAX_DEPTH;
     Checker[][] currentState = null;
     Checker myColor = null;
