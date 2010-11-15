@@ -66,56 +66,9 @@ public class ItayRotem implements Player {
         return v;
      }
 
-    /*private int check(int row,int col,Checker curColor) {
-        int counter = 0 ;
-            	for(i=1;i<=3 && row+i<currentState[0].length;i++) {
-            if(currentState[row+i][col]!=curColor)  break;
-            counter++;
-        }
-        return counter;
-    }                             */
 
-    /**
-     * @return the color which has four in a row or Empty if there isn't one.
-     */
-    private Checker identifyWinner(int row,int col) {
-    	int counter = 1,i = 0;
-    	Checker curColor = currentState[row][col];
-         //horizontal check:
-    	for(i=1;i<=3 && row+i<currentState.length;i++) {
-            if(currentState[row+i][col]!=curColor)  break;
-            counter++;
-        }
-         for(i=1;i<=3 && row-i>=0;i++) {
-            if(currentState[row-i][col]!=curColor)  break;
-            counter++;
-        }
-        if(counter>3) return curColor;
-
-        //vertical check:
-        counter = 1;
-        for(i=1;i<=3 && col+i<currentState[0].length;i++) {
-            if(currentState[row][col+i]!=curColor)  break;
-            counter++;
-        }
-         for(i=1;i<=3 && col-i>=0;i++) {
-            if(currentState[row][col-i]!=curColor)  break;
-            counter++;
-        }
-        if(counter>3) return curColor;
-        //diagonal1:
-        counter = 1;
-        for(i=1;i<=3 && col+i<currentState[0].length && row+i<currentState.length;i++) {
-            if(currentState[row+i][col+i]!=curColor)  break;
-            counter++;
-        }
-         for(i=1;i<=3 && col-i>=0 && row-i>=0;i++) {
-            if(currentState[row-i][col-i]!=curColor)  break;
-            counter++;
-        }
-        if(counter>3) return curColor;
-        //diagonal2:
-        counter = 1;
+    private boolean checkDiagonal2(int row,int col,Checker curColor) {
+        int counter = 1,i;
         for(i=1;i<=3 && col+i<currentState[0].length && row-i>=0;i++) {
             if(currentState[row-i][col+i]!=curColor)  break;
             counter++;
@@ -124,8 +77,59 @@ public class ItayRotem implements Player {
             if(currentState[row+i][col-i]!=curColor)  break;
             counter++;
         }
-        if(counter>3) return curColor;
+        return counter>3;
+    }
 
+    private boolean checkDiagonal1(int row,int col,Checker curColor) {
+        int counter = 1,i;
+        for(i=1;i<=3 && col+i<currentState[0].length && row+i<currentState.length;i++) {
+            if(currentState[row+i][col+i]!=curColor)  break;
+            counter++;
+        }
+         for(i=1;i<=3 && col-i>=0 && row-i>=0;i++) {
+            if(currentState[row-i][col-i]!=curColor)  break;
+            counter++;
+        }
+        return counter>3;
+    }
+
+    private boolean checkVertical(int row,int col,Checker curColor) {
+        int counter = 1,i;
+        for(i=1;i<=3 && col+i<currentState[0].length;i++) {
+            if(currentState[row][col+i]!=curColor)  break;
+            counter++;
+        }
+         for(i=1;i<=3 && col-i>=0;i++) {
+            if(currentState[row][col-i]!=curColor)  break;
+            counter++;
+        }
+        return counter>3;
+    }
+
+     private boolean checkHorizontal(int row,int col,Checker curColor) {
+         int counter =1,i;
+         for(i=1;i<=3 && row+i<currentState.length;i++) {
+                     if(currentState[row+i][col]!=curColor)  break;
+                     counter++;
+                 }
+         for(i=1;i<=3 && row-i>=0;i++) {
+                     if(currentState[row-i][col]!=curColor)  break;
+                     counter++;
+         }
+            return counter>3;
+        }
+
+    /**
+     * @return the color which has four in a row or Empty if there isn't one.
+     */
+    private Checker identifyWinner(int row,int col) {
+    	Checker curColor = currentState[row][col];
+        if(checkHorizontal(row,col,curColor) ||
+                checkVertical(row,col,curColor) ||
+                checkDiagonal1(row,col,curColor) ||
+                checkDiagonal2(row,col,curColor)) {
+            return curColor;
+        }
         return Checker.EMPTY; 
     }
 
