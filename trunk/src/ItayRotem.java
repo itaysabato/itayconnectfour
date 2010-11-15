@@ -63,6 +63,7 @@ public class ItayRotem implements Player {
             pickupChecker(i);
         }
         remainingDepth++;
+         
         return v;
      }
 
