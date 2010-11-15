@@ -21,14 +21,34 @@ public class ItayRotem implements Player {
         if(myColor!=Checker.RED) hisColor = Checker.RED ;
         else hisColor = Checker.BLACK ;
         currentState = state;
-        return maxValue(Integer.MIN_VALUE, Integer.MAX_VALUE, true,0,0);
+        return maxValue0();       //Integer.MIN_VALUE, Integer.MAX_VALUE, true,0,0
     }
+
+    private int maxValue0() {
+        int tempRow;
+        int v = Integer.MIN_VALUE;
+        int bestChild = 0;
+        remainingDepth--;
+        
+        for( int i = 0; i < currentState[0].length; i++) {
+            tempRow = dropChecker(i,myColor);
+            if(tempRow==-1) continue;
+            int m =  minValue(Integer.MIN_VALUE, Integer.MAX_VALUE,tempRow,i);
+            if(v <= m ) {
+                 v = m;
+                 bestChild = i;
+            }
+            pickupChecker(i);
+        }
+        remainingDepth++;
+        return bestChild;
+    }
+
 
     private int maxValue(int alpha, int beta, boolean isRoot,int row,int col) {
         Checker winner = identifyWinner(row,col);
-
-//        System.out.println(Arrays.deepToString(currentState));
-//        System.out.println(winner);
+       System.out.println(Arrays.deepToString(currentState));
+       System.out.println(winner);
 
         if(winner  != Checker.EMPTY) {
             return winner == myColor ? Integer.MAX_VALUE : Integer.MIN_VALUE;
