@@ -17,42 +17,43 @@ public class ItayRotem implements Player {
 //    Board b;        //
 
 
-        private void buildTable() {
+
+    private void buildTable() {
         table = new int[currentState.length][currentState[0].length];
-        int i = 0,j = 0, k=0;
-        //horizontal
-        for(i=0;i<currentState.length;i++)
-            for(j=0;j<currentState[0].length-3;j++)
-                for(k=0;k<=3;k++)
-                    table[i][j+k]++;
-        //vertical
-        for(i=0;i<currentState[0].length;i++)
-            for(j=0;j<currentState.length-3;j++)
-                for(k=0;k<=3;k++)
-                    table[j+k][i]++;
-        //diagonal1
-        for(i=0;i<currentState.length;i++)     {
-            for(j=0;j<currentState[0].length-3;j++) {
-                 if(j+3+i>=currentState.length || j+i<0)  continue;
-                 for(k=0;k<=3;k++)
-                     table[j+k+i][j+k]++;
-            }
-        }
-        //diagonal2
-        for(i=0;i<table.length;i++)     {
-            for(j=table[0].length-1;j>=3;j--) {
-                 if(j-3-i<0 || j-i>=table.length)  continue;
-                 for(k=0;k<=3;k++)
-                     table[j-k-i][j-k]++;
-            }
-        }
+        int row = 0,col = 0, k= 0;
+        for(row=0;row<table.length;row++)
+            for(col=0;col<table[0].length;col++)
+                table[row][col] = 0;
 
-        for(i=0;i<currentState.length;i++) {
-            for(j=0;j<currentState[0].length;j++)
-                    System.out.print(table[i][j]+",");
-            System.out.println();
-        }
+        for(row=0;row<table.length;row++)
+            for(col=0;col<table[0].length;col++) {
+                //horizontal check
+                if(row+3<table.length) {
+                    for(k=0;k<=3;k++)
+                        table[row+k][col]++;
+                }
+                //vertical check
+                if(col+3<table[0].length) {
+                    for(k=0;k<=3;k++)
+                        table[row][col+k]++;
+                }
+                //diagonal1 check
+                if(row+3<table.length && col+3<table[0].length) {
+                    for(k=0;k<=3;k++)
+                        table[row+k][col+k]++;
+                }
+                //diagonal2 check
+                if(row-3>=0 && col+3<table[0].length) {
+                    for(k=0;k<=3;k++)
+                        table[row-k][col+k]++;
+                }
+            }
 
+        for(row=0;row<table.length;row++)     {
+             System.out.println();
+            for(col=0;col<table[0].length;col++)
+                System.out.print(table[row][col]+",");
+        }
     }
 
 
