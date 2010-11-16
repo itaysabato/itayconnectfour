@@ -247,11 +247,45 @@ public class ItayRotem implements Player {
         public ChildChooser(int cols) {
             orderedChildren = new int[cols];
             orderedChildren[0] = cols / 2;
-            
+
             for(int i = 1; i < cols / 2; i++) {
                 orderedChildren[i] = (cols / 2) - i;
                 orderedChildren[i+1] = (cols / 2) + i;
             }
         }
     }
+    private int applyHeuristic2() {
+        int row = 0,col = 0, k= 0, result = 0, add = 0;
+        Checker curColor = null;
+        for(row=0;row<table.length;row++)
+            for(col=0;col<table[0].length;col++) {
+
+                if(currentState[row][col]==Checker.EMPTY)  continue;
+                curColor =  currentState[row][col];
+                if(curColor==myColor) add = 1;
+                else add = -1;
+                //horizontal check
+                if(row+3<table.length) {
+                    for(k=0;k<=3 && currentState[row+k][col]==curColor;k++)
+                        result+=add;
+                }
+                //vertical check
+                if(col+3<table[0].length) {
+                    for(k=0;k<=3 && currentState[row][col+k]==curColor;k++)
+                        result+=add;
+                }
+                //diagonal1 check
+                if(row+3<table.length && col+3<table[0].length) {
+                    for(k=0;k<=3 && currentState[row+k][col+k]==curColor;k++)
+                        result+=add;
+                }
+                //diagonal2 check
+                if(row-3>=0 && col+3<table[0].length) {
+                    for(k=0;k<=3 && currentState[row-k][col+k]==curColor;k++)
+                        result+=add;
+                }
+            }
+        return result;
+    }
+
 }
