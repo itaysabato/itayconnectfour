@@ -1,3 +1,6 @@
+import java.util.Arrays;
+import java.util.Random;
+
 /**
  * Names: Itay Sabato, Rotem Barzilay <br/>
  * Logins: itays04, rotmus  <br/>
@@ -7,7 +10,7 @@
  */
 public class ItayRotem implements Player {
 
-    private static final int MAX_DEPTH = 10;
+    private static final int MAX_DEPTH = 9;
 
     int remainingDepth = MAX_DEPTH;
     Checker[][] currentState = null;
@@ -17,12 +20,9 @@ public class ItayRotem implements Player {
     int[][] table = null;
     int rows = 0;
     int cols = 0;
-
-//    Board b;        //
-
+    private boolean IBEF;
 
     public int getBestResponse(Checker[][] state, Checker myColor) {
-//        this.b = b;           //
         if(table == null){
             rows =  state.length;
             cols = state[0].length;
@@ -32,6 +32,7 @@ public class ItayRotem implements Player {
             else hisColor = Checker.BLACK ;
             buildTable();
         }
+        IBEF = new Random().nextBoolean();
         currentState = state;
         return bestChild();
     }
@@ -39,7 +40,7 @@ public class ItayRotem implements Player {
     private void buildTable() {
         table = new int[rows][cols];
 
-        int row = 0,col = 0, k= 0;
+        int row,col, k;
         for(row=0;row<table.length;row++)
             for(col=0;col<table[0].length;col++)
                 table[row][col] = 0;
@@ -75,7 +76,8 @@ public class ItayRotem implements Player {
         int v = Integer.MIN_VALUE;
         int bestChild = 0;
 
-        for( int i = 0; i < cols; i++) {
+        for( int j = 0; j < cols; j++) {
+            int i = chooser.orderedChildren[j];
             tempRow = dropChecker(i,myColor);
             if(tempRow==-1) continue;
 
@@ -92,7 +94,6 @@ public class ItayRotem implements Player {
         return bestChild;
     }
 
-
     private int maxValue(int alpha, int beta,int row,int col) {
         Checker winner = identifyWinner(row,col);
 
@@ -103,7 +104,8 @@ public class ItayRotem implements Player {
 
         int tempRow;
         int v = Integer.MIN_VALUE;
-        for( int i = 0; i < cols; i++) {
+        for( int j = 0; j < cols; j++) {
+            int i = chooser.orderedChildren[j];
             tempRow = dropChecker(i,myColor);
             if(tempRow==-1) continue;
 
@@ -130,7 +132,8 @@ public class ItayRotem implements Player {
 
         int tempRow;
         int v = Integer.MAX_VALUE;
-        for(int i = 0; i < cols; i++) {
+        for(int j = 0; j < cols; j++) {
+            int i = chooser.orderedChildren[j];
             tempRow = dropChecker(i,hisColor);
             if(tempRow==-1) continue;
 
@@ -232,6 +235,10 @@ public class ItayRotem implements Player {
      * @return the heuristic value.
      */
     private int applyHeuristic() {
+        return IBEF ? IBEF() :rotemHeuristic();
+    }
+
+    private int IBEF() {
         int i,j,result = 0;
         for(i=0;i<rows;i++)
             for(j=0;j<cols;j++) {
@@ -249,13 +256,13 @@ public class ItayRotem implements Player {
             orderedChildren[0] = cols / 2;
 
             for(int i = 1; i < cols / 2; i++) {
-                orderedChildren[i] = (cols / 2) - i;
-                orderedChildren[i+1] = (cols / 2) + i;
+                orderedChildren[2*i] = (cols / 2) - i;
+                orderedChildren[2*i-1] = (cols / 2) + i;
             }
         }
     }
-    private int applyHeuristic2() {
-        int row = 0,col = 0, k= 0, result = 0, add = 0;
+    private int rotemHeuristic() {
+        int row = 0,col = 0, k= 0, result = 0, add;
         Checker curColor = null;
         for(row=0;row<table.length;row++)
             for(col=0;col<table[0].length;col++) {
@@ -287,5 +294,4 @@ public class ItayRotem implements Player {
             }
         return result;
     }
-
 }
